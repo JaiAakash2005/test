@@ -18,7 +18,8 @@ EMAIL_RECEIVER = os.environ.get('EMAIL_RECEIVER', 'admin@cyberguard.com')
 
 # ── DB init ────────────────────────────────────────────────────
 def init_db():
-    conn = sqlite3.connect('complaints.db')
+    DB_PATH = os.path.join(os.getcwd(), "complaints.db")
+    sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS complaints (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

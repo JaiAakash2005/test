@@ -19,31 +19,43 @@ EMAIL_RECEIVER = os.environ.get('EMAIL_RECEIVER', 'admin@cyberguard.com')
 # ── DB init ────────────────────────────────────────────────────
 def init_db():
     DB_PATH = os.path.join(os.getcwd(), "complaints.db")
-    sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
+
     c.execute('''CREATE TABLE IF NOT EXISTS complaints (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        text TEXT, prediction TEXT, confidence REAL,
-        advice TEXT, timestamp TEXT, ip TEXT
+        text TEXT,
+        prediction TEXT,
+        confidence REAL,
+        advice TEXT,
+        timestamp TEXT,
+        ip TEXT
     )''')
+
     c.execute('''CREATE TABLE IF NOT EXISTS users (
-        id        INTEGER PRIMARY KEY AUTOINCREMENT,
-        username  TEXT UNIQUE,
-        password  TEXT,
-        role      TEXT DEFAULT 'user',
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE,
+        password TEXT,
+        role TEXT DEFAULT 'user',
         last_login TEXT,
         created_at TEXT
     )''')
-    # Default admin
+
     try:
-        c.execute("INSERT INTO users (username,password,role,created_at) VALUES (?,?,?,?)",
-                  ('admin','admin123','admin',
-                   datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+        c.execute(
+            "INSERT INTO users (username,password,role,created_at) VALUES (?,?,?,?)",
+            (
+                'admin',
+                'admin123',
+                'admin',
+                datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            )
+        )
     except:
         pass
-    conn.commit(); conn.close()
 
-init_db()
+    conn.commit()
+    conn.close()
 
 # ── Advice map ─────────────────────────────────────────────────
 ADVICE = {
